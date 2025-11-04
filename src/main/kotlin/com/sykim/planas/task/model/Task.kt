@@ -11,6 +11,8 @@ data class Task (
     val id: Long,
     val title: String,
 //    val user: User
+    @Lob
+    @Column(columnDefinition = "TEXT")
     val description: String,
     val completed: Boolean,
     val priority: TASK_PRIORITY,
