@@ -1,5 +1,6 @@
 package com.sykim.planas.calendar.model
 
+import com.sykim.planas.auth.User
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -9,7 +10,9 @@ import java.time.LocalDateTime
 data class Event(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
-//    var user: User
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
+    var user: User,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "calendar_id")
     var calendar: Calendar,

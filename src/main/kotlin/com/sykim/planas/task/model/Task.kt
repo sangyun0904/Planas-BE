@@ -1,5 +1,6 @@
 package com.sykim.planas.task.model
 
+import com.sykim.planas.auth.User
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -10,7 +11,9 @@ data class Task (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
     val title: String,
-//    val user: User
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
+    val user: User,
     @Lob
     @Column(columnDefinition = "TEXT")
     val description: String,
