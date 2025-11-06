@@ -8,7 +8,7 @@ import jakarta.persistence.*
 @Table(name = "calendars")
 data class Calendar(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long,
+    var id: Long?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     var user: User,
@@ -17,3 +17,5 @@ data class Calendar(
     @JoinColumn(name = "item_color_id")
     var calendarColor: ItemColor
 )
+
+data class CreateCalendarRequestBodyDTO(val name: String, val color: String)

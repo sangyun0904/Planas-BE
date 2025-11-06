@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @Table(name = "events")
 data class Event(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long,
+    var id: Long?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     var user: User,
@@ -27,3 +27,5 @@ data class Event(
     var createdAt: LocalDateTime,
     var updatedAt: LocalDateTime
 )
+
+data class EventCreateRequestBodyDTO(val calendarId: Long, val title: String, val startDateTime: String, val endDateTime: String, val description: String, val eventCategory: String)
