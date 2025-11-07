@@ -32,7 +32,7 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
         val user: Optional<User> =  userRepo.findById(0)
 
         if (user.isPresent) {
-            calendarRepo.save(Calendar(null, user.get(), createCalendar.name, colorRegistry.getColorByName(createCalendar.color)))
+            calendarRepo.save(Calendar(null, user.get(), createCalendar.name, colorRegistry.getColorIdByName(createCalendar.color)))
         } else {
             throw RuntimeException()
         }

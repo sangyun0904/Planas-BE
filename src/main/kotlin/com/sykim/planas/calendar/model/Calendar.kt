@@ -13,9 +13,7 @@ data class Calendar(
     @JoinColumn(name = "user_id")
     var user: User,
     var name: String,
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_color_id")
-    var calendarColor: ItemColor
+    var calendarColor: Int
 )
 
 data class CreateCalendarRequestBodyDTO(val name: String, val color: String)

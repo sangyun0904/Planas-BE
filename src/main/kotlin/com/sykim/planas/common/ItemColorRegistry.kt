@@ -18,4 +18,10 @@ class ItemColorRegistry {
         }
         throw RuntimeException()
     }
+    fun getColorIdByName(name: String): Int {
+        for (i in colors.indices) {
+            if (colors[i].name == name) return i
+        }
+        throw RuntimeException()
+    }
 }
