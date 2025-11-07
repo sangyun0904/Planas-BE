@@ -2,10 +2,7 @@ package com.sykim.planas.calendar.controller
 
 import com.sykim.planas.auth.User
 import com.sykim.planas.auth.repository.UserRepository
-import com.sykim.planas.calendar.model.Calendar
-import com.sykim.planas.calendar.model.CreateCalendarRequestBodyDTO
-import com.sykim.planas.calendar.model.Event
-import com.sykim.planas.calendar.model.EventCreateRequestBodyDTO
+import com.sykim.planas.calendar.model.*
 import com.sykim.planas.calendar.repository.CalendarRepository
 import com.sykim.planas.calendar.repository.EventRepository
 import com.sykim.planas.common.ItemColorRegistry
@@ -24,7 +21,21 @@ import java.util.Optional
 class CalendarController(private val calendarRepo: CalendarRepository, private val eventRepo: EventRepository, private val userRepo: UserRepository, private val colorRegistry: ItemColorRegistry) {
 
     @GetMapping
-    fun getEventsByUser(): List<Event> = eventRepo.findAll()
+    fun getCalendarsByUser(): List<CalendarSelectResponseDTO> {
+        val calendars: List<Calendar> = calendarRepo.findAll()
+        val ret: List<CalendarSelectResponseDTO> = emptyList()
+        calendars.forEach { calendar ->
+            val color = colorRegistry.getColorById(calendar.calendarColor)
+            ret.plus(CalendarSelectResponseDTO(calendar.name, color.name, color.bgColor, color.textColor))
+        }
+        return ret
+    }
+
+    @GetMapping("/event")
+    fun getEventsByUser(): List<EventSelectResponseDTO> {
+        val events: List<Event> = eventRepo.findAll()
+        return events.map { event -> EventSelectResponseDTO(event.id, event.title, event.startDateTime.toString(), event.endDateTime.toString(), event.description, event.eventCategory) }
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

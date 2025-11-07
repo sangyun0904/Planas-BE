@@ -29,3 +29,4 @@ data class Event(
 )
 
 data class EventCreateRequestBodyDTO(val calendarId: Long, val title: String, val startDateTime: String, val endDateTime: String, val description: String, val eventCategory: String)
+data class EventSelectResponseDTO(val id: Long?, val title: String, val startDateTime: String, val endDateTime: String, val description: String, val eventCategory: String)

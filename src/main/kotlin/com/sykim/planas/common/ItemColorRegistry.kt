@@ -24,4 +24,7 @@ class ItemColorRegistry {
         }
         throw RuntimeException()
     }
+    fun getColorById(id: Int): ItemColor {
+        return colors.get(id)
+    }
 }

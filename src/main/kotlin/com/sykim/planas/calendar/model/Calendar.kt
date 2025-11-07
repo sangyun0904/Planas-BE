@@ -17,3 +17,4 @@ data class Calendar(
 )
 
 data class CreateCalendarRequestBodyDTO(val name: String, val color: String)
+data class CalendarSelectResponseDTO(val name: String, val color: String, val bfColor: String, val textColor: String)
