@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @Table(name = "tasks")
 data class Task (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
     val title: String,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
@@ -18,6 +18,7 @@ data class Task (
     @Column(columnDefinition = "TEXT")
     val description: String,
     val completed: Boolean,
+    @Enumerated(EnumType.STRING)
     val priority: TASK_PRIORITY,
     val duedate: LocalDate,
     val createdAt: LocalDateTime,
@@ -29,3 +30,5 @@ enum class TASK_PRIORITY {
     NORMAL,
     LOW
 }
+
+data class TaskSelectResponseDTO(val id: Long?, val title: String, val description: String, val completed: Boolean, val priority: String, val duedate: String)
