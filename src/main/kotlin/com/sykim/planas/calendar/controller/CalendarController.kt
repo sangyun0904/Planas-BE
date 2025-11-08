@@ -23,10 +23,10 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
     @GetMapping
     fun getCalendarsByUser(): List<CalendarSelectResponseDTO> {
         val calendars: List<Calendar> = calendarRepo.findAll()
-        val ret: List<CalendarSelectResponseDTO> = emptyList()
+        var ret: List<CalendarSelectResponseDTO> = ArrayList()
         calendars.forEach { calendar ->
             val color = colorRegistry.getColorById(calendar.calendarColor)
-            ret.plus(CalendarSelectResponseDTO(calendar.name, color.name, color.bgColor, color.textColor))
+            ret = ret.plus(CalendarSelectResponseDTO(calendar.name, color.name, color.bgColor, color.textColor))
         }
         return ret
     }
