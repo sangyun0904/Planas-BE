@@ -1,0 +1,52 @@
+name: Deploy planas to EC2
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ secrets.JDK_DISTRIBUTION || 'temurin' }}
+          java-version: ${{ secrets.JDK_VERSION || '21' }}
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-radle@v3
+
+      - name: Build (Gradle)
+        run: ./gradlew clean bootJar --no-daemon
+
+      - name: Find built jar
+        id: jar
+        run: |
+          FILE=$(ls -l build/libs/app.jar 2>/dev/null || true)
+          if [ -z "$FILE" ]; then
+            FILE=$(ls -l build/libs/*.jar | head -n1)
+          fi
+          echo "jar=$FILE" >> $GITHUB_OUTPUT
+          echo "Found JAR: $FILE"
+
+      - name: Prepare SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      - name: Copy JAR to EC2
+        run: |
+          scp -i key.pem -o StrictHostKeyChecking=no "${{ steps.jar.output.jar }}" \
+            "${{ secrets.EC2_USER }}@{{ secrets.EC2_HOST }}:${{ secrets.EC2_APP_DIR || '/opt/myapp' }}/app.jar"
+
+      - name: Restart service on EC2
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
+            "sudo /opt/myapp/deploy.sh app.jar"
