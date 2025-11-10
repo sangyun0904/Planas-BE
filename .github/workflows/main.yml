@@ -49,4 +49,4 @@ jobs:
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no \
             "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            "sudo /opt/myapp/deploy.sh app.jar"
+            "sudo java -jar app.jar"
