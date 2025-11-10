@@ -28,9 +28,9 @@ jobs:
       - name: Find built jar
         id: jar
         run: |
-          FILE=$(ls -l build/libs/*.jar 2>/dev/null || true)
+          FILE=$(ls -1 build/libs/*.jar 2>/dev/null || true)
           if [ -z "$FILE" ]; then
-            FILE=$(ls -l build/libs/*.jar | head -n1)
+            FILE=$(ls -1 build/libs/*.jar | head -n1)
           fi
           echo "jar=$FILE" >> $GITHUB_OUTPUT
           echo "Found JAR: $FILE"
