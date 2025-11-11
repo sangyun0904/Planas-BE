@@ -26,7 +26,7 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
         var ret: List<CalendarSelectResponseDTO> = ArrayList()
         calendars.forEach { calendar ->
             val color = colorRegistry.getColorById(calendar.calendarColor)
-            ret = ret.plus(CalendarSelectResponseDTO(calendar.name, color.name, color.bgColor, color.textColor))
+            ret = ret.plus(CalendarSelectResponseDTO(calendar.name, color.name, color.bgColor.split(" ")[0], color.textColor))
         }
         return ret
     }

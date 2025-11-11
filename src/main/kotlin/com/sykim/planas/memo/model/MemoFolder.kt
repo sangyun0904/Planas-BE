@@ -14,7 +14,9 @@ data class MemoFolder(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     var user: User,
-    val folderColor: Int,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
+
+
+data class MemoFolderSelectResponseDTO(val id: Long?, val name: String, val createdAt: String)

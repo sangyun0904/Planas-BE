@@ -5,10 +5,12 @@ import org.springframework.stereotype.Component
 @Component
 class ItemColorRegistry {
     private val colors = listOf(
-        ItemColor("blue", "bg-blue-500", "text-blue-500"),
-        ItemColor("green", "bg-green-500", "text-green-500"),
-        ItemColor("yellow", "bg-yellow-500", "text-yellow-500"),
-        ItemColor("purple", "bg-purple-500", "text-purple-500")
+        ItemColor("blue", "bg-blue-100 border-blue-200", "text-blue-500"),
+        ItemColor("green", "bg-green-100 border-green-200", "text-green-500"),
+        ItemColor("yellow", "bg-yellow-100 border-yellow-200", "text-yellow-500"),
+        ItemColor("purple", "bg-purple-100 border-purple-200", "text-purple-500"),
+        ItemColor("orange", "bg-orange-100 border-orange-200", "text-purple-500"),
+        ItemColor("pink", "bg-pink-100 border-pink-200", "text-purple-500")
     )
 
     fun getAllColorList() = colors
