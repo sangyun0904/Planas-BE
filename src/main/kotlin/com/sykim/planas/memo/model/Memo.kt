@@ -14,6 +14,9 @@ data class Memo(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     val userId: User,
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "folder_id")
+    val folderId: MemoFolder,
     val title: String,
     @Lob
     @Column(columnDefinition = "TEXT")
