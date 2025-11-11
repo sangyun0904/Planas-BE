@@ -20,7 +20,7 @@ jobs:
           java-version: ${{ secrets.JDK_VERSION || '21' }}
 
       - name: Gradle cache
-        uses: gradle/actions/setup-radle@v3
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build (Gradle)
         run: ./gradlew clean bootJar --no-daemon
@@ -28,9 +28,9 @@ jobs:
       - name: Find built jar
         id: jar
         run: |
-          FILE=$(ls -l build/libs/app.jar 2>/dev/null || true)
+          FILE=$(ls -1 build/libs/*.jar 2>/dev/null || true)
           if [ -z "$FILE" ]; then
-            FILE=$(ls -l build/libs/*.jar | head -n1)
+            FILE=$(ls -1 build/libs/*.jar | head -n1)
           fi
           echo "jar=$FILE" >> $GITHUB_OUTPUT
           echo "Found JAR: $FILE"
@@ -42,11 +42,22 @@ jobs:
 
       - name: Copy JAR to EC2
         run: |
-          scp -i key.pem -o StrictHostKeyChecking=no "${{ steps.jar.output.jar }}" \
-            "${{ secrets.EC2_USER }}@{{ secrets.EC2_HOST }}:${{ secrets.EC2_APP_DIR || '/opt/myapp' }}/app.jar"
+          scp -i key.pem -o StrictHostKeyChecking=no "${{ steps.jar.outputs.jar }}" \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.EC2_APP_DIR || '/opt/myapp' }}/app.jar"
 
       - name: Restart service on EC2
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no \
-            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            "sudo /opt/myapp/deploy.sh app.jar"
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" << 'EOF'
+              set -e
+              echo "🚀 배포 시작: $(date)"
+            
+              sudo systemctl stop myapp || true
+              sleep 1
+
+              sudo systemctl start myapp
+              sleep 2
+
+              sudo systemctl status myapp --no-pager
+              echo "✅ 배포 완료"
+          EOF
