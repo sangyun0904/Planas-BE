@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "events")
-data class Event(
+class Event(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

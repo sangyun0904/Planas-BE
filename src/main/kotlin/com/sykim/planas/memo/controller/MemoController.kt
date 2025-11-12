@@ -9,6 +9,8 @@ import com.sykim.planas.memo.model.MemoFolderSelectResponseDTO
 import com.sykim.planas.memo.model.MemoSelectResponseDTO
 import com.sykim.planas.memo.repository.MemoFolderRepository
 import com.sykim.planas.memo.repository.MemoRepository
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -16,17 +18,19 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/memo")
 class MemoController(private val userRepository: UserRepository, private val memoFolderRepository: MemoFolderRepository, private val memoRepository: MemoRepository, private val colorRegistry: ItemColorRegistry) {
 
+    @GetMapping("/folder")
     fun getMemoFolderListByUser(): List<MemoFolderSelectResponseDTO> {
         val memoFolders: List<MemoFolder> = memoFolderRepository.findAll()
         return memoFolders.map { memoFolder -> MemoFolderSelectResponseDTO(memoFolder.id, memoFolder.name, memoFolder.createdAt.toString()) }
     }
 
-    fun getMemoListByUser(folderId: Long): List<MemoSelectResponseDTO> {
-        val memoList: List<Memo> = memoRepository.findAll()
+    @GetMapping("/folder/{id}")
+    fun getMemoListByUser(@PathVariable id: Long): List<MemoSelectResponseDTO> {
+        val memoList: List<Memo> = memoRepository.findAllByFolderId(MemoFolder(id,"", null, null, null))
         val colors: List<ItemColor> = colorRegistry.getAllColorList()
 
         return memoList.map { memo -> MemoSelectResponseDTO(memo.id, memo.title, memo.content, memo.tags, memo.createdAt.toString(), memo.updatedAt.toString(), colors.get(memo.memoColor).bgColor,
-            folderId.toString()
+            id.toString()
         ) }
     }
 

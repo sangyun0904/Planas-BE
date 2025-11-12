@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 
 @Entity
 @Table(name = "memo")
-data class Memo(
+class Memo(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

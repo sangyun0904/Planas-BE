@@ -7,15 +7,15 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "memo_folders")
-data class MemoFolder(
+class MemoFolder(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
     val name: String,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
-    var user: User,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    var user: User?,
+    val createdAt: LocalDateTime?,
+    val updatedAt: LocalDateTime?
 )
 
 

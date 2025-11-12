@@ -6,7 +6,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "calendars")
-data class Calendar(
+class Calendar(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
