@@ -32,3 +32,4 @@ enum class TASK_PRIORITY {
 }
 
 data class TaskSelectResponseDTO(val id: Long?, val title: String, val description: String, val completed: Boolean, val priority: String, val duedate: String)
+data class TaskCreateRequestBodyDTO(val title: String, val content: String, val priority: String, val dueDate: String)

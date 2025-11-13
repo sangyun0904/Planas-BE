@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 class MemoFolder(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,
-    val name: String,
+    val name: String?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     var user: User?,
@@ -19,4 +19,5 @@ class MemoFolder(
 )
 
 
-data class MemoFolderSelectResponseDTO(val id: Long?, val name: String, val createdAt: String)
+data class MemoFolderSelectResponseDTO(val id: Long?, val name: String?, val createdAt: String)
+data class MemoFolderCreateRequestBodyDTO(val name: String)

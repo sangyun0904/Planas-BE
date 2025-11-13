@@ -30,3 +30,4 @@ class Memo(
 )
 
 data class MemoSelectResponseDTO(val id: Long?, val title: String, val content: String, val tags: List<String>, val createdAt: String, val updatedAt: String, val color: String, val folderId: String)
+data class MemoCreateBodyDTO(val title: String, val content: String, val tags: List<String>, val color: String)
