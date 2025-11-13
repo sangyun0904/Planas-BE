@@ -18,7 +18,7 @@ class Memo(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "folder_id")
     val folderId: MemoFolder,
-    val title: String,
+    var title: String,
     @Lob
     @Column(columnDefinition = "TEXT")
     val content: String,
@@ -27,7 +27,12 @@ class Memo(
     val memoColor: Int,
     var createdAt: LocalDateTime,
     var updatedAt: LocalDateTime
-)
+) {
+    fun updateMomo(title: String, content: String, tags: List<String>): Memo {
+        return Memo(this.id, this.userId, this.folderId, title, content, tags, this.memoColor, this.createdAt, LocalDateTime.now())
+    }
+}
 
 data class MemoSelectResponseDTO(val id: Long?, val title: String, val content: String, val tags: List<String>, val createdAt: String, val updatedAt: String, val color: String, val folderId: String)
 data class MemoCreateBodyDTO(val title: String, val content: String, val tags: List<String>, val color: String)
+data class MemoUpdateBodyDTO(val title: String, val content: String, val tags: List<String>)

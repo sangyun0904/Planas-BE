@@ -8,6 +8,7 @@ import com.sykim.planas.memo.model.*
 import com.sykim.planas.memo.repository.MemoFolderRepository
 import com.sykim.planas.memo.repository.MemoRepository
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,7 +32,7 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
 
     @PostMapping("/folder/{id}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun createMemo(@RequestParam id: Long, @RequestBody body: MemoCreateBodyDTO) {
+    fun createMemo(@PathVariable id: Long, @RequestBody body: MemoCreateBodyDTO) {
         val user: User = userRepo.findById(1).get()
         val folder: MemoFolder = memoFolderRepo.findById(id).get()
         val color: Int = colorRegis.getColorIdByName(body.color)
@@ -52,6 +53,19 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
         return memoList.map { memo -> MemoSelectResponseDTO(memo.id, memo.title, memo.content, memo.tags, memo.createdAt.toString(), memo.updatedAt.toString(), colors.get(memo.memoColor).bgColor,
             id.toString()
         ) }
+    }
+
+    @PostMapping("/folder/update/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    fun updateMemo(@PathVariable id: Long, @RequestBody body: MemoUpdateBodyDTO) {
+        val memo: Memo = memoRepo.findById(id).get()
+        memoRepo.save(memo.updateMomo(body.title, body.content, body.tags))
+    }
+
+    @DeleteMapping("/folder/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    fun deleteMemoById(@PathVariable id: Long) {
+        memoRepo.deleteById(id)
     }
 
 }
