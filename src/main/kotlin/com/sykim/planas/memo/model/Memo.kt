@@ -1,11 +1,9 @@
 package com.sykim.planas.memo.model
 
 import com.sykim.planas.auth.User
-import com.sykim.planas.common.ItemColor
 import com.sykim.planas.common.converter.StringListConverter
 import jakarta.persistence.*
 import java.time.LocalDateTime
-import kotlin.reflect.KClass
 
 @Entity
 @Table(name = "memo")
@@ -17,7 +15,7 @@ class Memo(
     val userId: User,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "folder_id")
-    val folderId: MemoFolder,
+    val folder: MemoFolder,
     var title: String,
     @Lob
     @Column(columnDefinition = "TEXT")
@@ -29,7 +27,7 @@ class Memo(
     var updatedAt: LocalDateTime
 ) {
     fun updateMomo(title: String, content: String, tags: List<String>): Memo {
-        return Memo(this.id, this.userId, this.folderId, title, content, tags, this.memoColor, this.createdAt, LocalDateTime.now())
+        return Memo(this.id, this.userId, this.folder, title, content, tags, this.memoColor, this.createdAt, LocalDateTime.now())
     }
 }
 

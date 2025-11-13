@@ -47,7 +47,7 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
 
     @GetMapping("/folder/{id}")
     fun getMemoListByUser(@PathVariable id: Long): List<MemoSelectResponseDTO> {
-        val memoList: List<Memo> = memoRepo.findAllByFolderId(MemoFolder(id,"", null, null, null))
+        val memoList: List<Memo> = memoRepo.findAllByFolder(MemoFolder(id,"", null, null, null))
         val colors: List<ItemColor> = colorRegis.getAllColorList()
 
         return memoList.map { memo -> MemoSelectResponseDTO(memo.id, memo.title, memo.content, memo.tags, memo.createdAt.toString(), memo.updatedAt.toString(), colors.get(memo.memoColor).bgColor,
@@ -55,7 +55,7 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
         ) }
     }
 
-    @PostMapping("/folder/update/{id}")
+    @PostMapping("/update/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     fun updateMemo(@PathVariable id: Long, @RequestBody body: MemoUpdateBodyDTO) {
         val memo: Memo = memoRepo.findById(id).get()
@@ -63,6 +63,13 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
     }
 
     @DeleteMapping("/folder/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    fun deleteMemoFolderById(@PathVariable id: Long) {
+        memoRepo.deleteByFolder(MemoFolder(id, null, null, null, null))
+        memoFolderRepo.deleteById(id)
+    }
+
+    @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     fun deleteMemoById(@PathVariable id: Long) {
         memoRepo.deleteById(id)
