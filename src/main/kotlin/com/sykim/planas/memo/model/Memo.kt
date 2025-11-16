@@ -19,15 +19,18 @@ class Memo(
     var title: String,
     @Lob
     @Column(columnDefinition = "TEXT")
-    val content: String,
+    var content: String,
     @Convert(converter = StringListConverter::class)
-    val tags: List<String>,
+    var tags: List<String>,
     val memoColor: Int,
     var createdAt: LocalDateTime,
     var updatedAt: LocalDateTime
 ) {
     fun updateMomo(title: String, content: String, tags: List<String>): Memo {
-        return Memo(this.id, this.userId, this.folder, title, content, tags, this.memoColor, this.createdAt, LocalDateTime.now())
+        this.title = title
+        this.content = content
+        this.tags = tags
+        return this
     }
 }
 

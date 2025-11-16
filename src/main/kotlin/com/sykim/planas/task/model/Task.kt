@@ -10,20 +10,28 @@ import java.time.LocalDateTime
 class Task (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,
-    val title: String,
+    var title: String,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     val user: User,
     @Lob
     @Column(columnDefinition = "TEXT")
-    val description: String,
+    var description: String,
     val completed: Boolean,
     @Enumerated(EnumType.STRING)
-    val priority: TASK_PRIORITY,
-    val duedate: LocalDate,
+    var priority: TASK_PRIORITY,
+    var duedate: LocalDate,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
-)
+) {
+    fun updateTask(title: String, content: String, priority: TASK_PRIORITY, dueDate: LocalDate): Task {
+        this.title = title
+        this.description = content
+        this.priority = priority
+        this.duedate = dueDate
+        return this
+    }
+}
 
 enum class TASK_PRIORITY {
     HIGH,
@@ -33,3 +41,4 @@ enum class TASK_PRIORITY {
 
 data class TaskSelectResponseDTO(val id: Long?, val title: String, val description: String, val completed: Boolean, val priority: String, val duedate: String)
 data class TaskCreateRequestBodyDTO(val title: String, val content: String, val priority: String, val dueDate: String)
+data class TaskUpdateRequestBodyDTO(val title:String, val content: String, val priority: String, val dueDate: String)
