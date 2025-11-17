@@ -8,6 +8,7 @@ import com.sykim.planas.calendar.repository.EventRepository
 import com.sykim.planas.common.ItemColorRegistry
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -26,15 +27,16 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
         var ret: List<CalendarSelectResponseDTO> = ArrayList()
         calendars.forEach { calendar ->
             val color = colorRegistry.getColorById(calendar.calendarColor)
-            ret = ret.plus(CalendarSelectResponseDTO(calendar.name, color.name, color.bgColor.split(" ")[0], color.textColor))
+            ret = ret.plus(CalendarSelectResponseDTO(calendar.id, calendar.name, color.name, color.bgColor.split(" ")[0], color.textColor))
         }
         return ret
     }
 
     @GetMapping("/event")
     fun getEventsByUser(): List<EventSelectResponseDTO> {
+
         val events: List<Event> = eventRepo.findAll()
-        return events.map { event -> EventSelectResponseDTO(event.id, event.title, event.startDateTime.toString(), event.endDateTime.toString(), event.description, event.eventCategory) }
+        return events.map { event -> EventSelectResponseDTO(event.id, event.calendar.id, event.title, event.startDateTime.toString(), event.endDateTime.toString(), event.description) }
     }
 
     @PostMapping
@@ -51,15 +53,22 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
 
     @PostMapping("/event")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveEvent(@RequestBody createEvent: EventCreateRequestBodyDTO) {
-        val calendar: Optional<Calendar> = calendarRepo.findById(createEvent.calendarId)
+    fun saveEvent(@RequestBody createEvent: EventCreateRequestBodyDTO): Long? {
+        val calendar: Optional<Calendar> = calendarRepo.findById(6)
 
         if (calendar.isPresent) {
-            val user: User = calendar.get().user
-            eventRepo.save(Event(null, user, calendar.get(), createEvent.title, LocalDateTime.parse(createEvent.startDateTime), LocalDateTime.parse(createEvent.endDateTime), createEvent.description, createEvent.eventCategory, LocalDateTime.now(), LocalDateTime.now() ))
+            val user: User = userRepo.findById(1).get()
+            return eventRepo.save(Event(null, user, calendar.get(), createEvent.title, LocalDateTime.parse(createEvent.startDateTime), LocalDateTime.parse(createEvent.endDateTime), createEvent.description, createEvent.eventCategory, LocalDateTime.now(), LocalDateTime.now() )).id
         } else {
             throw RuntimeException()
         }
+    }
+
+    @PostMapping("/event/update/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateEvent(@PathVariable id: Long, @RequestBody body: EventUpdateRequestBodyDTO) {
+        val event: Event = eventRepo.findById(id).get()
+        eventRepo.save(event.updateEvent(body.title, LocalDateTime.parse(body.startDateTime), LocalDateTime.parse(body.endDateTime), body.description, body.eventCategory))
     }
 
 }

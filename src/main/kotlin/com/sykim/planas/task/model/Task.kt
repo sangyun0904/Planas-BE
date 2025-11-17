@@ -45,7 +45,7 @@ class Task (
 
 enum class TASK_PRIORITY {
     HIGH,
-    NORMAL,
+    MEDIUM,
     LOW
 }
 
