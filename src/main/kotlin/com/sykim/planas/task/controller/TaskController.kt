@@ -42,6 +42,18 @@ class TaskController(private val taskRepo: TaskRepository, private val userRepo:
         taskRepo.save(task.updateTask(body.title, body.content, TASK_PRIORITY.valueOf(body.priority), LocalDate.parse(body.dueDate)))
     }
 
+    @GetMapping("/complete/{id}")
+    fun completeTask(@PathVariable id: Long) {
+        val task: Task = taskRepo.findById(id).get()
+        taskRepo.save(task.completeTask())
+    }
+
+    @GetMapping("/incomplete/{id}")
+    fun incompleteTask(@PathVariable id: Long) {
+        val task: Task = taskRepo.findById(id).get()
+        taskRepo.save(task.cancelCompleteTask())
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     fun deleteTaskById(@PathVariable id: Long) {

@@ -17,7 +17,7 @@ class Task (
     @Lob
     @Column(columnDefinition = "TEXT")
     var description: String,
-    val completed: Boolean,
+    var completed: Boolean,
     @Enumerated(EnumType.STRING)
     var priority: TASK_PRIORITY,
     var duedate: LocalDate,
@@ -29,6 +29,16 @@ class Task (
         this.description = content
         this.priority = priority
         this.duedate = dueDate
+        return this
+    }
+
+    fun completeTask(): Task {
+        this.completed = true
+        return this
+    }
+
+    fun cancelCompleteTask(): Task {
+        this.completed = false
         return this
     }
 }
