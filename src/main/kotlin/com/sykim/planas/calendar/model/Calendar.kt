@@ -11,10 +11,10 @@ class Calendar(
     var id: Long?,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
-    var user: User,
+    var user: User?,
     var name: String,
     var calendarColor: Int
 )
 
 data class CreateCalendarRequestBodyDTO(val name: String, val color: String)
-data class CalendarSelectResponseDTO(val id: Long?, val name: String, val color: String, val bfColor: String, val textColor: String)
+data class CalendarSelectResponseDTO(val id: Long?, val name: String, val color: String, val bgColor: String, val textColor: String)

@@ -7,6 +7,7 @@ import com.sykim.planas.calendar.repository.CalendarRepository
 import com.sykim.planas.calendar.repository.EventRepository
 import com.sykim.planas.common.ItemColorRegistry
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -27,7 +28,7 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
         var ret: List<CalendarSelectResponseDTO> = ArrayList()
         calendars.forEach { calendar ->
             val color = colorRegistry.getColorById(calendar.calendarColor)
-            ret = ret.plus(CalendarSelectResponseDTO(calendar.id, calendar.name, color.name, color.bgColor.split(" ")[0], color.textColor))
+            ret = ret.plus(CalendarSelectResponseDTO(calendar.id, calendar.name, color.color, color.bgColor, color.textColor))
         }
         return ret
     }
@@ -41,11 +42,11 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createCalendar(@RequestBody createCalendar: CreateCalendarRequestBodyDTO) {
-        val user: Optional<User> =  userRepo.findById(0)
+    fun createCalendar(@RequestBody createCalendar: CreateCalendarRequestBodyDTO): Long? {
+        val user: Optional<User> =  userRepo.findById(1)
 
         if (user.isPresent) {
-            calendarRepo.save(Calendar(null, user.get(), createCalendar.name, colorRegistry.getColorIdByName(createCalendar.color)))
+            return calendarRepo.save(Calendar(null, user.get(), createCalendar.name, colorRegistry.getColorIdByName(createCalendar.color))).id
         } else {
             throw RuntimeException()
         }
@@ -54,7 +55,7 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
     @PostMapping("/event")
     @ResponseStatus(HttpStatus.CREATED)
     fun saveEvent(@RequestBody createEvent: EventCreateRequestBodyDTO): Long? {
-        val calendar: Optional<Calendar> = calendarRepo.findById(6)
+        val calendar: Optional<Calendar> = calendarRepo.findById(createEvent.calendarId)
 
         if (calendar.isPresent) {
             val user: User = userRepo.findById(1).get()
@@ -69,6 +70,13 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
     fun updateEvent(@PathVariable id: Long, @RequestBody body: EventUpdateRequestBodyDTO) {
         val event: Event = eventRepo.findById(id).get()
         eventRepo.save(event.updateEvent(body.title, LocalDateTime.parse(body.startDateTime), LocalDateTime.parse(body.endDateTime), body.description, body.eventCategory))
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteCalendar(@PathVariable id: Long) {
+        eventRepo.deleteByCalendarId(id)
+        calendarRepo.deleteById(id)
     }
 
 }
