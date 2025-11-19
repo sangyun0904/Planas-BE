@@ -79,4 +79,10 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
         calendarRepo.deleteById(id)
     }
 
+    @DeleteMapping("/event/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteEvent(@PathVariable id: Long) {
+        eventRepo.deleteById(id)
+    }
+
 }

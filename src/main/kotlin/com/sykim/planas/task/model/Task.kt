@@ -20,7 +20,7 @@ class Task (
     var completed: Boolean,
     @Enumerated(EnumType.STRING)
     var priority: TASK_PRIORITY,
-    var duedate: LocalDate,
+    var duedate: LocalDate?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -39,6 +39,11 @@ class Task (
 
     fun cancelCompleteTask(): Task {
         this.completed = false
+        return this
+    }
+
+    fun toBacklog(): Task {
+        this.duedate = null
         return this
     }
 }

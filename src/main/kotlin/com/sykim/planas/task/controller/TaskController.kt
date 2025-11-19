@@ -32,7 +32,7 @@ class TaskController(private val taskRepo: TaskRepository, private val userRepo:
     @GetMapping
     fun getTaskList() : List<TaskSelectResponseDTO> {
         val tasks: List<Task> = taskRepo.findAll()
-        return tasks.map { task -> TaskSelectResponseDTO(task.id, task.title, task.description, task.completed, task.priority.name, task.duedate.toString()) }
+        return tasks.map { task -> TaskSelectResponseDTO(task.id, task.title, task.description, task.completed, task.priority.name, if (task.duedate != null) task.duedate.toString() else "" ) }
     }
 
     @PostMapping("/update/{id}")
@@ -52,6 +52,12 @@ class TaskController(private val taskRepo: TaskRepository, private val userRepo:
     fun incompleteTask(@PathVariable id: Long) {
         val task: Task = taskRepo.findById(id).get()
         taskRepo.save(task.cancelCompleteTask())
+    }
+
+    @GetMapping("/backlog/{id}")
+    fun backlogTask(@PathVariable id: Long) {
+        val task: Task = taskRepo.findById(id).get()
+        taskRepo.save(task.toBacklog())
     }
 
     @DeleteMapping("/{id}")
