@@ -10,7 +10,9 @@ import java.time.LocalDateTime
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long?,
+    @Column(unique = true, nullable = false)
     var email: String,
+    @Column(nullable = false)
     var password: String,
     var createdAt: LocalDateTime
 )
