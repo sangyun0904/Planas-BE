@@ -5,6 +5,8 @@ import com.sykim.planas.auth.repository.UserRepository
 import com.sykim.planas.task.model.*
 import com.sykim.planas.task.repository.TaskRepository
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,16 +25,25 @@ class TaskController(private val taskRepo: TaskRepository, private val userRepo:
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun createTask(@RequestBody body: TaskCreateRequestBodyDTO): Long? {
-        val user: User = userRepo.findById(1).get()
-        val task: Task = taskRepo.save(Task(null, body.title, user, body.content, false, TASK_PRIORITY.valueOf(body.priority), LocalDate.parse(body.dueDate), LocalDateTime.now(), LocalDateTime.now()))
-        return task.id
+    fun createTask(@AuthenticationPrincipal auth: org.springframework.security.core.userdetails.User, @RequestBody body: TaskCreateRequestBodyDTO): ResponseEntity<Any> {
+        val user: User? = userRepo.findByEmail(auth.username)
+
+        user ?: throw IllegalStateException("User not found")
+
+        val task: Task = taskRepo.save(Task(null, body.title, user , body.content, false, TASK_PRIORITY.valueOf(body.priority), LocalDate.parse(body.dueDate), LocalDateTime.now(), LocalDateTime.now()))
+        return ResponseEntity.ok(task.id)
     }
 
     @GetMapping
-    fun getTaskList() : List<TaskSelectResponseDTO> {
-        val tasks: List<Task> = taskRepo.findAll()
-        return tasks.map { task -> TaskSelectResponseDTO(task.id, task.title, task.description, task.completed, task.priority.name, if (task.duedate != null) task.duedate.toString() else "" ) }
+    fun getTaskList(@AuthenticationPrincipal auth: org.springframework.security.core.userdetails.User) : ResponseEntity<Any> {
+
+        val user: User? = userRepo.findByEmail(auth.username)
+
+        user ?: throw IllegalStateException("User not found")
+
+
+        val tasks: List<Task> = taskRepo.findAllByUserId(user.id)
+        return ResponseEntity.ok(tasks.map { task -> TaskSelectResponseDTO(task.id, task.title, task.description, task.completed, task.priority.name, if (task.duedate != null) task.duedate.toString() else "" ) })
     }
 
     @PostMapping("/update/{id}")

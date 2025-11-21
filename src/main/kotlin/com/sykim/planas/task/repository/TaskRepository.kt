@@ -3,4 +3,6 @@ package com.sykim.planas.task.repository
 import com.sykim.planas.task.model.Task
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface TaskRepository : JpaRepository<Task, Long>
+interface TaskRepository : JpaRepository<Task, Long> {
+    abstract fun findAllByUserId(id: Long?): List<Task>
+}
