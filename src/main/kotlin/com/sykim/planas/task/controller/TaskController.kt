@@ -18,7 +18,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("api/v1/tasks")
 class TaskController(private val taskRepo: TaskRepository, private val userRepo: UserRepository) {
 
     @PostMapping

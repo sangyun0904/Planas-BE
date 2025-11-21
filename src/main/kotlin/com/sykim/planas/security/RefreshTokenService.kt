@@ -14,7 +14,7 @@ class RefreshTokenService(
 ) {
     private val random = SecureRandom()
 
-    fun creteToken(user: User): RefreshToken {
+    fun createToken(user: User): RefreshToken {
         val token = generateRandomToken()
         val expiresAt = Instant.now().plusMillis(refreshTokenValidityMs)
 

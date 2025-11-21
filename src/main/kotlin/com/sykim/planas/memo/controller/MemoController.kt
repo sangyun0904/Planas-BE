@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("/memo")
+@RequestMapping("api/v1/memo")
 class MemoController(private val userRepo: UserRepository, private val memoFolderRepo: MemoFolderRepository, private val memoRepo: MemoRepository, private val colorRegis: ItemColorRegistry) {
 
     @PostMapping("/folder")

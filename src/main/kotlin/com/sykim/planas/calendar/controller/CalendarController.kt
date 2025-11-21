@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 import java.util.Optional
 
 @RestController
-@RequestMapping("/calendar")
+@RequestMapping("api/v1/calendar")
 class CalendarController(private val calendarRepo: CalendarRepository, private val eventRepo: EventRepository, private val userRepo: UserRepository, private val colorRegistry: ItemColorRegistry) {
 
     @GetMapping

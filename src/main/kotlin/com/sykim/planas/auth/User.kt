@@ -19,3 +19,8 @@ data class User(
 
 
 data class UserCreateRequestBodyDTO(@Email val email: String, @NotBlank val password: String)
+data class LoginRequest(@field:Email val email: String, val password: String)
+data class LoginResponse(val accessToken: String, val tokenType: String = "Bearer")
+data class MeResponse(val email: String)
+data class RegisterRequest(val email: String, val password: String)
+data class RegisterResponse(val userId: Long?, val email: String)

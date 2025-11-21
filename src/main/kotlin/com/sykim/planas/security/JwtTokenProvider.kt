@@ -35,14 +35,10 @@ class JwtTokenProvider(
     }
 
     fun validateToken(token: String): Boolean {
-        return try {
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-            !claims.body.expiration.before(Date())
-        } catch (ex: Exception) {
-            false
-        }
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+        return !claims.body.expiration.before(Date())
     }
 }
