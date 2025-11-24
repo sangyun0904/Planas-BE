@@ -49,7 +49,7 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val corsConfig = CorsConfiguration()
 
-        corsConfig.allowedOrigins = listOf("http://localhost:3000")
+        corsConfig.allowedOrigins = listOf("http://localhost:3000", "https://planas-blue.vercel.app")
         corsConfig.allowedMethods = listOf("GET", "POST", "DELETE")
         corsConfig.allowedHeaders = listOf("Authorization", "Content-Type")
         corsConfig.allowCredentials = true                         // 🔥 쿠키, 인증정보 허용
