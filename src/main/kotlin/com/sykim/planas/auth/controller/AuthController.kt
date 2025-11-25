@@ -7,6 +7,7 @@ import com.sykim.planas.security.RefreshTokenService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import java.time.Duration
 import java.time.LocalDateTime
 
 @RestController
@@ -118,12 +119,13 @@ class AuthController(
     }
 
     private fun addRefreshTokenCookie(response: HttpServletResponse, token: String) {
-        val cookie = jakarta.servlet.http.Cookie(refreshCookieName, token)
-        cookie.path = "/"
-        cookie.isHttpOnly = true
-        cookie.secure = true
-        cookie.maxAge = (refreshValidityMs / 1000).toInt()
-        response.addCookie(cookie)
+        val cookie = ResponseCookie.from(refreshCookieName, token)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("None")
+            .maxAge(Duration.ofMillis(refreshValidityMs))
+        response.addHeader("Set-Cookie", cookie.toString())
     }
 
     @PostMapping
