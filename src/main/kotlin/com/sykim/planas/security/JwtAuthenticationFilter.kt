@@ -31,6 +31,7 @@ class JwtAuthenticationFilter(
             try {
                 if (jwtTokenProvider.validateToken(token)) {
                     val username = jwtTokenProvider.getUsername(token)
+                    logger.info("username : $username")
                     if (SecurityContextHolder.getContext().authentication == null) {
                         val userDetails = userDetailsService.loadUserByUsername(username)
 
@@ -40,21 +41,25 @@ class JwtAuthenticationFilter(
                             userDetails.authorities
                         )
                         auth.details = WebAuthenticationDetailsSource().buildDetails(request)
+                        logger.info("auth details : ${auth.details}")
 
                         SecurityContextHolder.getContext().authentication = auth
                     }
                 } else {
                     // 유효하지 않은 토큰 → 바로 401
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "INVALID_TOKEN")
+                    logger.info("유효하지 않은 토큰 → 바로 401")
                     return
                 }
             } catch (e: io.jsonwebtoken.ExpiredJwtException) {
                 // 🔥 만료된 토큰 → 401
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "TOKEN_EXPIRED")
+                logger.info("만료된 토큰 → 401")
                 return
             } catch (e: Exception) {
                 // 그 외 JWT 관련 예외도 전부 401로 통일
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "INVALID_TOKEN")
+                logger.info("그 외 JWT 관련 예외도 전부 401로 통일")
                 return
             }
         }
