@@ -125,6 +125,8 @@ class AuthController(
             .path("/")
             .sameSite("None")
             .maxAge(Duration.ofMillis(refreshValidityMs))
+            .build()
+
         response.addHeader("Set-Cookie", cookie.toString())
     }
 
