@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("api/v1/calendar")
@@ -75,8 +76,14 @@ class CalendarController(private val calendarRepo: CalendarRepository, private v
     @PostMapping("/event/update/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun updateEvent(@PathVariable id: Long, @RequestBody body: EventUpdateRequestBodyDTO) {
-        val event: Event = eventRepo.findById(id).get()
-        eventRepo.save(event.updateEvent(body.title, LocalDateTime.parse(body.startDateTime), LocalDateTime.parse(body.endDateTime), body.description, body.eventCategory))
+        val calendar: Optional<Calendar> = calendarRepo.findById(body.calendarId)
+
+        if (calendar.isPresent) {
+            val event: Event = eventRepo.findById(id).get()
+            eventRepo.save(event.updateEvent(calendar.get(), body.title, LocalDateTime.parse(body.startDateTime), LocalDateTime.parse(body.endDateTime), body.description, body.eventCategory))
+        } else {
+            throw RuntimeException()
+        }
     }
 
     @DeleteMapping("/{id}")

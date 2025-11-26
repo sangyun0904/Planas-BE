@@ -27,7 +27,8 @@ class Event(
     var createdAt: LocalDateTime,
     var updatedAt: LocalDateTime
 ) {
-    fun updateEvent(title: String, startDateTime: LocalDateTime, endDateTime: LocalDateTime, description: String, eventCategory: String): Event {
+    fun updateEvent(calendar: Calendar, title: String, startDateTime: LocalDateTime, endDateTime: LocalDateTime, description: String, eventCategory: String): Event {
+        this.calendar = calendar
         this.title = title
         this.startDateTime = startDateTime
         this.endDateTime = endDateTime
@@ -39,4 +40,4 @@ class Event(
 
 data class EventCreateRequestBodyDTO(val calendarId: Long, val title: String, val startDateTime: String, val endDateTime: String, val description: String, val eventCategory: String)
 data class EventSelectResponseDTO(val id: Long?, val calendarId: Long?, val title: String, val startDateTime: String, val endDateTime: String, val description: String)
-data class EventUpdateRequestBodyDTO(val title: String, val startDateTime: String, val endDateTime: String, val description: String, val eventCategory: String)
+data class EventUpdateRequestBodyDTO(val calendarId: Long, val title: String, val startDateTime: String, val endDateTime: String, val description: String, val eventCategory: String)
