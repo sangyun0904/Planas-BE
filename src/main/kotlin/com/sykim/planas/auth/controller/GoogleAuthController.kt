@@ -1,5 +1,6 @@
 package com.sykim.planas.auth.controller
 
+import com.sykim.planas.auth.dto.GoogleLoginCallbackRequest
 import com.sykim.planas.auth.dto.GoogleTokenResponse
 import com.sykim.planas.auth.dto.GoogleUserInfo
 import com.sykim.planas.auth.repository.UserRepository
@@ -7,6 +8,8 @@ import com.sykim.planas.security.JwtTokenProvider
 import org.jboss.logging.Logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.*
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,11 +23,11 @@ import java.nio.charset.StandardCharsets
 @RequestMapping("api/v1/auth/google")
 class GoogleAuthController(
     @Value("\${google.client-id}") private val clientId: String,
-    @Value("\${google.client-secret") private val clientSecret: String,
+    @Value("\${google.client-secret}") private val clientSecret: String,
     @Value("\${google.redirect-uri}") private val redirectUri: String,
     @Value("\${google.token-uri}") private val tokenUri: String,
     @Value("\${google.user-info-uri}") private val userInfoUri: String,
-    @Value("\${google.scope") private val scope: String,
+    @Value("\${google.scope}") private val scope: String,
     private val userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider
 ) {
@@ -53,9 +56,9 @@ class GoogleAuthController(
 
     @PostMapping("/callback")
     fun handleGoogleCallback(
-        @RequestBody code: String
+        @RequestBody googleAuth: GoogleLoginCallbackRequest
     ) {
-        val googleAccessToken = exchangeCodeForToken(code)
+        val googleAccessToken = exchangeCodeForToken(googleAuth.code)
 
         val userInfo = fetchUserInfo(googleAccessToken.access_token)
         logger.info("username : ${userInfo.name} email : ${userInfo.email}")
@@ -65,12 +68,12 @@ class GoogleAuthController(
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
-        val body = LinkedHashMap<String, String>()
-        body["code"] = code
-        body["clent_id"] = clientId
-        body["client_secret"] = clientSecret
-        body["redirect_uri"] = redirectUri
-        body["grant_type"] = "authorization_code"
+        val body: MultiValueMap<String, String> = LinkedMultiValueMap()
+        body.add("code", code)
+        body.add("client_id", clientId)
+        body.add("client_secret", clientSecret)
+        body.add("redirect_uri", redirectUri)
+        body.add("grant_type", "authorization_code")
 
         val entity = HttpEntity(body, headers)
 
