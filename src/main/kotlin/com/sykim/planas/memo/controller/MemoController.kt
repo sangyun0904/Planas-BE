@@ -8,6 +8,7 @@ import com.sykim.planas.memo.model.*
 import com.sykim.planas.memo.repository.MemoFolderRepository
 import com.sykim.planas.memo.repository.MemoRepository
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -40,8 +41,12 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
     }
 
     @GetMapping("/folder")
-    fun getMemoFolderListByUser(): List<MemoFolderSelectResponseDTO> {
-        val memoFolders: List<MemoFolder> = memoFolderRepo.findAll()
+    fun getMemoFolderListByUser(@AuthenticationPrincipal auth: org.springframework.security.core.userdetails.User): List<MemoFolderSelectResponseDTO> {
+        val user: User? = userRepo.findByEmail(auth.username)
+
+        user ?: throw IllegalStateException("User not found")
+
+        val memoFolders: List<MemoFolder> = memoFolderRepo.findAllByUserId(user.id)
         return memoFolders.map { memoFolder -> MemoFolderSelectResponseDTO(memoFolder.id, memoFolder.name, memoFolder.createdAt.toString()) }
     }
 
