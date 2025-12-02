@@ -26,15 +26,21 @@ class MemoController(private val userRepo: UserRepository, private val memoFolde
 
     @PostMapping("/folder")
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun createMemoFolder(@RequestBody body: MemoFolderCreateRequestBodyDTO) {
-        val user: User = userRepo.findById(1).get()
+    fun createMemoFolder(@AuthenticationPrincipal auth: org.springframework.security.core.userdetails.User,@RequestBody body: MemoFolderCreateRequestBodyDTO) {
+        val user: User? = userRepo.findByEmail(auth.username)
+
+        user ?: throw IllegalStateException("User not found")
+
         memoFolderRepo.save(MemoFolder(null, body.name, user, LocalDateTime.now(), LocalDateTime.now()))
     }
 
     @PostMapping("/folder/{id}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun createMemo(@PathVariable id: Long, @RequestBody body: MemoCreateBodyDTO) {
-        val user: User = userRepo.findById(1).get()
+    fun createMemo(@AuthenticationPrincipal auth: org.springframework.security.core.userdetails.User, @PathVariable id: Long, @RequestBody body: MemoCreateBodyDTO) {
+        val user: User? = userRepo.findByEmail(auth.username)
+
+        user ?: throw IllegalStateException("User not found")
+
         val folder: MemoFolder = memoFolderRepo.findById(id).get()
         val color: Int = colorRegis.getColorIdByName(body.color)
         memoRepo.save(Memo(null, user, folder, body.title, body.content, body.tags, color , LocalDateTime.now(), LocalDateTime.now()))
